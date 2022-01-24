@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+      <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+	<div class="preloader">
+		<div class="preloader__row">
+		  <div class="preloader__item"></div>
+		  <div class="preloader__item"></div>
+		</div>
+	  </div>
+  <h1 style=color:#ecf0f1>Введите данные для включения двигателя дорожки</h1>
+<div id="wrapper">
+	
+	<form id="signin" method="post" action="" autocomplete="off">
+		<input type="text" id="pass" name="period" placeholder="время" />
+		<button type="submit">&#xf0da;</button>
+	</form>
+	<script>
+		window.onload = function () {
+		  document.body.classList.add('loaded_hiding');
+		  window.setTimeout(function () {
+			document.body.classList.add('loaded');
+			document.body.classList.remove('loaded_hiding');
+		  }, 500);
+		}
+	  </script>
+</div>
+  
+  
+</body>
+</html>

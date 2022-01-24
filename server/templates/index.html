@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+      <link rel="stylesheet" href="static/css/style3.css">
+</head>
+<body>
+	<div class="preloader">
+		<div class="preloader__row">
+		  <div class="preloader__item"></div>
+		  <div class="preloader__item"></div>
+		</div>
+	  </div>
+  <h1 style="color:#ecf0f1", style="font-family:Verdana, Geneva, Tahoma, sans-serif">{{ text }}</h1>
+<div id="wrapper" style="top: 400px;">
+	<form name="signin" method="post" action="">
+		<input name="submit_button" type="submit" style="left:0px" value="Загрузить" class="floating-button">
+	</form>
+	<script>
+		window.onload = function () {
+		  document.body.classList.add('loaded_hiding');
+		  window.setTimeout(function () {
+			document.body.classList.add('loaded');
+			document.body.classList.remove('loaded_hiding');
+		  }, 500);
+		}
+	  </script>
+</div>
+</body>
+</html>

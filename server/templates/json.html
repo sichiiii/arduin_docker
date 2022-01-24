@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+      <link rel="stylesheet" href="static/css/style2.css">
+
+</head>
+
+<body>
+  <div class="preloader">
+		<div class="preloader__row">
+		  <div class="preloader__item"></div>
+		  <div class="preloader__item"></div>
+		</div>
+    <script>
+      window.onload = function () {
+        document.body.classList.add('loaded_hiding');
+        window.setTimeout(function () {
+        document.body.classList.add('loaded');
+        document.body.classList.remove('loaded_hiding');
+        }, 500);
+      }
+      </script>
+	  </div>
+  <h1 style=color:#ecf0f1, style="font-family:Verdana, Geneva, Tahoma, sans-serif;">{{title}}</h1>
+<div id="wrapper">
+	<form id="signin" method="post" action="" autocomplete="off">
+		<h2 style="color:black; text-align: center; font-size: 32px; margin-left: -80px;" type="text"> {{json}}</h2>	
+    <a href="remoter" style="left:5px" class="floating-button">Вернуться</a>	  
+	</form>
+</div>
+  
+  
+</body>
+</html>

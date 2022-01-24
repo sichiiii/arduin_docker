@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+      <link rel="stylesheet" href="static/css/style1.css">
+	  <script src="jquery-2.1.4.js"></script>
+</head>
+
+<body>
+	<div class="preloader">
+		<div class="preloader__row">
+		  <div class="preloader__item"></div>
+		  <div class="preloader__item"></div>
+		</div>
+	  </div>
+  <h1 style="color: #ecf0f1", style="font-family:Verdana, Geneva, Tahoma, sans-serif">Програмный блокировщик</h1>
+<div id="wrapper">
+	<form id="signin" method="post" action="" autocomplete="off">
+		<label style="color: #ecf0f1; position:relative; top:4px; right:4px;", type="text"> Выберите активность</label>
+		<label class="switch">
+			<input type="checkbox" name="checkbox">
+			<span class="slider round"></span>
+		</label>		  
+		<button type="submit">&#xf0da;</button>
+	</form>
+	<script>
+		window.onload = function () {
+		  document.body.classList.add('loaded_hiding');
+		  window.setTimeout(function () {
+		  document.body.classList.add('loaded');
+		  document.body.classList.remove('loaded_hiding');
+		  }, 500);
+		}
+	</script>
+</div>
+  
+  
+</body>
+</html>

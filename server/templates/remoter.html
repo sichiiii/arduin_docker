@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+      <link rel="stylesheet" href="static/css/style3.css">
+</head>
+<body>
+	<div class="preloader">
+		<div class="preloader__row">
+		  <div class="preloader__item"></div>
+		  <div class="preloader__item"></div>
+		</div>
+	  </div>
+  <h1>Меню</h1>
+  
+<div id="wrapper" style="top: 40%; margin-top: -70px;">
+	<form id="signin" method="post" action="" autocomplete="off">
+		
+		<a href="conveer" style="left:-33px" class="floating-button">Конвейер</a>
+		<a href="blade" class="floating-button">Резак</a>
+		<a href="ejection" class="floating-button">Выброс</a> 
+		<a href="weight" class="floating-button">Вес</a>
+		<a href="check" class="floating-button">Наличие</a>
+		<a href="stop" class="floating-button">Стоп</a>
+		<!-- <a href="stop" class="floating-button">Остановить</a> -->
+		<!-- <a href="software_blocker" class="floating-button">Блокировщик</a> -->
+		
+	</form>
+	<script>
+		window.onload = function () {
+		  document.body.classList.add('loaded_hiding');
+		  window.setTimeout(function () {
+			document.body.classList.add('loaded');
+			document.body.classList.remove('loaded_hiding');
+		  }, 500);
+		}
+	  </script>
+</div>
+</body>
+</html>
