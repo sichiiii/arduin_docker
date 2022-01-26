@@ -54,7 +54,6 @@ class SerialPortConnection():
                 final_string = final_string + i
                 if i == '}':
                     break
-            print(final_string)
             final = json.loads(final_string)
             return final['weight']
         except Exception as ex:

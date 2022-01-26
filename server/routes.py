@@ -1,8 +1,10 @@
+from random import weibullvariate
 from typing import Text
 from flask import request, json, render_template, redirect, url_for, flash
 from app import app
 from main import SerialPortConnection
 from config import Configuration
+from time import sleep
 
 import app_logger
 
@@ -15,18 +17,19 @@ logger = app_logger.get_logger(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def index():
     try:
-        if request.method == 'POST':
-            if request.form['submit_button'] == 'Загрузить':
-                weight = float(arduino.weight())
-                max_weight = float(config.get('requirements', 'max_weight'))
-                if weight < max_weight:
-                    arduino.conveer(1)
-                    return render_template('index.html', text='ОПЕРАЦИЯ УСПЕШНА')
-                elif weight < 10:
-                    return render_template('index.html', text='Бутылка отсуствует!')
-                else:
-                    return render_template('index.html', text='Слишком большой вес!')
-        return render_template('index.html', text='Положите бутылку в аппарат и нажмите кнопку')
+        sleep(1)
+        max_weight = float(config.get('requirements', 'max_weight'))
+        weight = arduino.weight()
+        print(weight)
+        if weight < max_weight:  # поменять макс. вес в конфиге
+            arduino.ejection()
+            sleep(1)  # поменять таймер между операциями
+            arduino.blade()
+            return render_template('index.html',  title = 'Измельчение', json='Операция успешна')
+        elif weight < 10:
+            return render_template('index.html', title = 'Измельчение', json='Бутылка отсуствует!')
+        else:
+            return render_template('index.html', title = 'Измельчение', json='Слишком большой вес!')
     except Exception as ex:
         logger.error(str(ex))
         return render_template('error.html', text=str(ex))
@@ -34,6 +37,7 @@ def index():
 @app.route("/remoter", methods=['GET', 'POST'])
 def remoter():
     try:
+        sleep(1)
         return render_template('remoter.html')
     except Exception as ex:
         logger.error(str(ex))
@@ -42,6 +46,7 @@ def remoter():
 @app.route("/conveer", methods=['GET', 'POST'])
 def conveer():
     try:
+        sleep(1)
         result = arduino.conveer()
         if result['status'] == 'ok':
             result = 'Операция успешна'
@@ -55,6 +60,7 @@ def conveer():
 @app.route("/blade", methods=['GET', 'POST'])
 def blade():
     try:
+        sleep(1)
         result = arduino.blade()
         if result['status'] == 'ok':
             result = 'Операция успешна'
@@ -70,6 +76,7 @@ def blade():
 @app.route("/ejection", methods=['GET', 'POST'])
 def ejection():
     try:
+        sleep(1)
         result = arduino.ejection()
         if result['status'] == 'ok':
             result = 'Операция успешна'
@@ -85,6 +92,7 @@ def ejection():
 @app.route("/weight", methods=['GET', 'POST'])
 def weight():
     try:
+        sleep(1)
         result = arduino.weight()
         return render_template('json.html', json=str(result)+' грамм', title = 'Вес')
     except Exception as ex:
@@ -94,8 +102,9 @@ def weight():
 @app.route("/check", methods=['GET', 'POST'])
 def check():
     try:
+        sleep(1)
         result = arduino.check()
-        if result == True:
+        if result == "True":
             result = 'Бутылка в аппарате'
         else:
             result = 'Бутылка отсутствует'
@@ -109,6 +118,7 @@ def check():
 @app.route("/stop", methods=['GET', 'POST'])
 def stop():
     try:
+        sleep(1)
         result = arduino.stop()
         if result['status'] == 'ok':
             result = 'Операция успешна'
