@@ -23,8 +23,7 @@ StaticJsonDocument<200> sensors;
 
 void setup() {
   Serial.begin(9600);
-  scale.begin(DT, SCK);                                      
-  scale.set_scale();                                          
+  scale.begin(DT, SCK);                                                                               
   scale.tare();                                             
   scale.set_scale(calibration_factor);
   pinMode(conveer_D5, OUTPUT);
