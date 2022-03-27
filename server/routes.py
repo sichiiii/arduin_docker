@@ -14,6 +14,15 @@ config.load(config_path)
 arduino = SerialPortConnection()
 logger = app_logger.get_logger(__name__)
 
+@app.route("/home", methods=['GET'])
+def hone():
+    try:
+        flats = ['123', '124', '125']  #TODO: get flats from db
+        return render_template('home.html', flats=flats)
+    except Exception as ex:
+        logger.error(str(ex))
+
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     try:
@@ -34,7 +43,7 @@ def index():
         logger.error(str(ex))
         return render_template('error.html', text=str(ex))
 
-@app.route("/remoter", methods=['GET', 'POST'])
+@app.route("/remoter", methods=['GET', 'POST'])   #TODO: add flat choosing
 def remoter():
     try:
         sleep(1)

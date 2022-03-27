@@ -1,9 +1,14 @@
+import models
+from database import engine
+
 from flask import Flask
+
 
 app = Flask(__name__)
 
 
 if __name__ == "__main__":
+    models.Base.metadata.create_all(bind=engine)
 
     from routes import *
     
