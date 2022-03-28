@@ -18,12 +18,19 @@ class SQL():
     def __init__(self):
         self.logger = app_logger.get_logger(__name__)
 
-    def get_hardware(self):
+    def add_bottle(self, flat):
         bottles_table = Table('bottles', meta, autoload=True)
         try:
             with engine.connect() as con:
-                sthm = select(bottles_table)
-                rs = con.execute(sthm)
-                return rs.fetchall()
+                sthm = select([bottles_table.c.count]).where(bottles_table.c.flat == flat)
+                count = con.execute(sthm).fetchall()
+                if count != []:
+                    bottle_count = count[0][0]
+                    sthm = update(bottles_table).where(bottles_table.c.flat == flat).values(count=bottle_count+1)
+                    con.execute(sthm)
+                else:
+                    sthm = insert(bottles_table).values(flat=flat, count=1)
+                    con.execute(sthm)
+            return
         except Exception as ex:
             self.logger.error(str(ex))

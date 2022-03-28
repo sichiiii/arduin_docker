@@ -1,11 +1,9 @@
-from random import weibullvariate
-from typing import Text
-from flask import request, json, render_template, redirect, url_for, flash
-from app import app
+from flask import request, render_template
 from main import SerialPortConnection
+from database import SQL
 from config import Configuration
 from time import sleep
-
+from app import app
 import app_logger
 
 config_path = './config.ini'
@@ -14,13 +12,24 @@ config.load(config_path)
 arduino = SerialPortConnection()
 logger = app_logger.get_logger(__name__)
 
-@app.route("/home", methods=['GET'])
-def hone():
+sql = SQL()
+
+@app.route("/home", methods=['GET', 'POST'])
+def home():
     try:
-        flats = ['123', '124', '125']  #TODO: get flats from db
-        return render_template('home.html', flats=flats)
+        if request.method == 'GET':
+            sleep(1)
+            flats = ['123', '124', '125', '123', '124', '125', '123', '124', '125', '123', '124', '125', '123', '124', '125', '123', '124', '125', '123', '124', '125']  #TODO: get flats from db
+            return render_template('home.html', flats=flats)
+        elif request.method == 'POST':
+            sleep(1)
+            flat = request.form['flat_button']
+            sql.add_bottle(flat)
+            return render_template('index.html',  title='Измельчение', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
+
+
 
 
 @app.route("/", methods=['GET', 'POST'])
