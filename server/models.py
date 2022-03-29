@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, String
 from database import Base
 
 class Bottles(Base):
     __tablename__ = "bottles"
 
     id = Column(Integer, primary_key=True, index=True)
-    flat = Column(Integer, unique=True)
+    flat = Column(Integer)
     count = Column(Integer)
+    house_number = Column(String)

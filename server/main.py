@@ -24,14 +24,14 @@ class SerialPortConnection():
             return {'status':'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
-            return {'status':'error'}
+            return {'status': 'error'}
 
     def blade(self):
         try:
             data = 'blade'
             self.ser.write(data.encode('ascii'))
             self.ser.flush()
-            return {'status':'ok'}
+            return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status':'error'}
@@ -41,7 +41,7 @@ class SerialPortConnection():
             data = 'escape'
             self.ser.write(data.encode('ascii'))
             self.ser.flush()
-            return {'status':'ok'}
+            return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status':'error'}
@@ -58,7 +58,7 @@ class SerialPortConnection():
             return final['weight']
         except Exception as ex:
             self.logger.error(str(ex))
-            return {'status':'error'}
+            return {'status': 'error'}
 
     def check(self):
         try:
@@ -72,14 +72,24 @@ class SerialPortConnection():
             return final['check']
         except Exception as ex:
             self.logger.error(str(ex))
-            return {'status':'error'}
+            return {'status': 'error'}
 
     def stop(self):
         try:
             data = 'stop'
-            data=json.dumps(data)
+            data = json.dumps(data)
             self.ser.write(data.encode('ascii'))
-            return {'status':'ok'}
+            return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
-            return {'status':'error'}
+            return {'status': 'error'}
+
+    def get_config_params(self):
+        try:
+            start = self.config.get('house', 'start')
+            end = self.config.get('house', 'end')
+            house_number = self.config.get('house', 'house_number')
+            return start, end, house_number
+        except Exception as ex:
+            self.logger.error(str(ex))
+            return {'status:': 'error'}

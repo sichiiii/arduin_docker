@@ -78,7 +78,9 @@
 	font-family: 'Open Sans', 'sans-serif', 'FontAwesome';
 }
 body {
+    overflow: hidden;
   }
+
 h1{
 	color: rgb(255, 255, 255);
 	margin: 20px auto 0;
