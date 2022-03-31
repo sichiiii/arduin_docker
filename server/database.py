@@ -1,6 +1,9 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from excel import Excel
 from sqlalchemy import *
+
+from main import SerialPortConnection
 
 import app_logger
 
@@ -15,20 +18,23 @@ Base = declarative_base()
 
 class SQL():
     def __init__(self):
+        self.excel = Excel()
         self.logger = app_logger.get_logger(__name__)
 
-    def add_bottle(self, flat, building):
+
+    def add_bottle(self, flat, house_number):
         bottles_table = Table('bottles', meta, autoload=True)
         try:
             with engine.connect() as con:
                 sthm = select([bottles_table.c.count]).where(bottles_table.c.flat == flat)
                 count = con.execute(sthm).fetchall()
+
                 if count != []:
                     bottle_count = count[0][0]
-                    sthm = update(bottles_table).where(bottles_table.c.flat == flat).values(count=bottle_count+1)
+                    sthm = update(bottles_table).where(and_(bottles_table.c.flat == flat, bottles_table.c.house_number == house_number)).values(count=bottle_count+1)
                     con.execute(sthm)
                 else:
-                    sthm = insert(bottles_table).values(flat=flat, count=1, building=building)
+                    sthm = insert(bottles_table).values(flat=flat, count=1, house_number=house_number)
                     con.execute(sthm)
             return
         except Exception as ex:
@@ -63,7 +69,8 @@ class SQL():
         try:
             with engine.connect() as con:
                 sthm = select([bottle_table.c.flat, bottle_table.c.count, bottle_table.c.house_number])
-                a = con.execute(sthm).fetchall()
-                print(a)
+                query = con.execute(sthm).fetchall()
+                self.excel.export_to_excel(query)
+            return 'ok'
         except Exception as ex:
             self.logger.error(str(ex))

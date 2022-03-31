@@ -30,14 +30,18 @@ def home():
             return render_template('index.html', title='Измельчение', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
+        return render_template('error.html', text=str(ex))
+
 
 @app.route("/export", methods=['GET', 'POST'])
 def export():
     try:
         sql.export()
-        return 1
+        return 'ok'
     except Exception as ex:
         logger.error(str(ex))
+        return render_template('error.html', text=str(ex))
+
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -59,6 +63,7 @@ def index():
         logger.error(str(ex))
         return render_template('error.html', text=str(ex))
 
+
 @app.route("/update_flats", methods=['GET'])
 def update_flats():
     try:
@@ -67,6 +72,7 @@ def update_flats():
         return render_template('index.html', title='Добавление квартир', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
+
 
 @app.route("/remoter", methods=['GET', 'POST'])  # TODO: add flat choosing
 def remoter():

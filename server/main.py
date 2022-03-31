@@ -5,6 +5,7 @@ from time import sleep
 
 config_path = './config.ini'
 
+
 class SerialPortConnection():
     def __init__(self):
         self.config = Configuration()
@@ -16,6 +17,7 @@ class SerialPortConnection():
         self.ser = serial.Serial(self.port_name, self.baudrate, timeout=int(self.pause)) 
         self.logger = app_logger.get_logger(__name__) 
 
+
     def conveer(self):
         try:
             data = 'conveer'
@@ -25,6 +27,7 @@ class SerialPortConnection():
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}
+
 
     def blade(self):
         try:
@@ -36,6 +39,7 @@ class SerialPortConnection():
             self.logger.error(str(ex))
             return {'status':'error'}
 
+
     def ejection(self):
         try:
             data = 'escape'
@@ -45,6 +49,7 @@ class SerialPortConnection():
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status':'error'}
+
 
     def weight(self):
         try:
@@ -60,6 +65,7 @@ class SerialPortConnection():
             self.logger.error(str(ex))
             return {'status': 'error'}
 
+
     def check(self):
         try:
             data = self.ser.readline().decode("utf-8")
@@ -74,6 +80,7 @@ class SerialPortConnection():
             self.logger.error(str(ex))
             return {'status': 'error'}
 
+
     def stop(self):
         try:
             data = 'stop'
@@ -83,6 +90,7 @@ class SerialPortConnection():
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}
+
 
     def get_config_params(self):
         try:
