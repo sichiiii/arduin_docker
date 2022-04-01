@@ -90,14 +90,3 @@ class SerialPortConnection():
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}
-
-
-    def get_config_params(self):
-        try:
-            start = self.config.get('house', 'start')
-            end = self.config.get('house', 'end')
-            house_number = self.config.get('house', 'house_number')
-            return start, end, house_number
-        except Exception as ex:
-            self.logger.error(str(ex))
-            return {'status:': 'error'}

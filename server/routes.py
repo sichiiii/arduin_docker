@@ -25,8 +25,22 @@ def home():
             return render_template('home.html', flats=flats)
         elif request.method == 'POST':
             sleep(1)
-            flat = request.form['flat_button']
-            sql.add_bottle(flat)
+            max_weight = float(config.get('requirements', 'max_weight'))
+            weight = arduino.weight()
+            print(weight)
+            if weight < max_weight:  # TODO: поменять макс. вес в конфиге
+                arduino.ejection()
+                sleep(1)  # TODO: поменять таймер между операциями
+                arduino.blade()
+                flat = request.form['flat_button']
+                house_number = config.get('house', 'house_number')
+                sql.add_bottle(flat, house_number)
+                return render_template('index.html', title='Измельчение', json='Операция успешна')
+            elif weight < 10:
+                return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
+            else:
+                return render_template('index.html', title='Измельчение', json='Слишком большой вес!')
+
             return render_template('index.html', title='Измельчение', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
@@ -67,7 +81,9 @@ def index():
 @app.route("/update_flats", methods=['GET'])
 def update_flats():
     try:
-        start, end, house_number = arduino.get_config_params()
+        start = config.get('house', 'start')
+        end = config.get('house', 'end')
+        house_number = config.get('house', 'house_number')
         sql.update_flats(int(start), int(end), house_number)
         return render_template('index.html', title='Добавление квартир', json='Операция успешна')
     except Exception as ex:
