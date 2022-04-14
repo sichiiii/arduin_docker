@@ -27,7 +27,7 @@ def home():
             sleep(1)
             max_weight = float(config.get('requirements', 'max_weight'))
             weight = arduino.weight()
-            print(weight)
+
             if weight < max_weight:  # TODO: поменять макс. вес в конфиге
                 arduino.ejection()
                 sleep(1)  # TODO: поменять таймер между операциями
@@ -63,8 +63,7 @@ def index():
         sleep(1)
         max_weight = float(config.get('requirements', 'max_weight'))
         weight = arduino.weight()
-        print(weight)
-        if weight < max_weight:  #TODO: поменять макс. вес в конфиге
+        if float(weight) < max_weight:  #TODO: поменять макс. вес в конфиге
             arduino.ejection()
             sleep(1)  #TODO: поменять таймер между операциями
             arduino.blade()

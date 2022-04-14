@@ -60,7 +60,7 @@ class SerialPortConnection():
                 if i == '}':
                     break
             final = json.loads(final_string)
-            return final['weight']
+            return float(final['weight'])
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}
