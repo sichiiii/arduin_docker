@@ -24,7 +24,7 @@
 	  </div>
 
   <h1 style=color:#ecf0f1, style="font-family:Verdana, Geneva, Tahoma, sans-serif;">Выберите номер квартиры</h1>
-  <form action="home" name="flats" style="margin-left: 27px" method="POST">
+  <form action="" name="flats" style="margin-left: 27px" method="POST">
 	{% for flat in flats %}
 	  	<button value={{ flat }} name="flat_button" class="floating-button"> {{ flat }} </button>
 	{% endfor %}

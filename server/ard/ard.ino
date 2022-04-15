@@ -41,7 +41,7 @@ void loop() {
        }
        if (command == "blade"){
             digitalWrite(blade_D7, HIGH);
-            delay(5000); 
+            delay(4000);
             digitalWrite(blade_D7, LOW);       
        }
        if (command == "escape"){

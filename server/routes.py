@@ -1,3 +1,5 @@
+import time
+
 from flask import request, render_template
 from main import SerialPortConnection
 from database import SQL
@@ -16,8 +18,8 @@ logger = app_logger.get_logger(__name__)
 sql = SQL()
 
 
-@app.route("/home", methods=['GET', 'POST'])
-def home():
+@app.route("/", methods=['GET', 'POST'])
+def index():
     try:
         if request.method == 'GET':
             sleep(1)
@@ -26,19 +28,28 @@ def home():
         elif request.method == 'POST':
             sleep(1)
             max_weight = float(config.get('requirements', 'max_weight'))
+            min_weight = float(config.get('requirements', 'min_weight'))
             weight = arduino.weight()
-
-            if weight < max_weight:  # TODO: поменять макс. вес в конфиге
-                arduino.ejection()
-                sleep(1)  # TODO: поменять таймер между операциями
-                arduino.blade()
-                flat = request.form['flat_button']
-                house_number = config.get('house', 'house_number')
-                sql.add_bottle(flat, house_number)
-                return render_template('index.html', title='Измельчение', json='Операция успешна')
-            elif weight < 10:
+            arduino.conveer()
+            sleep(5)
+            if (weight < max_weight) and (weight > min_weight):
+                if arduino.check():
+                    flat = request.form['flat_button']
+                    sleep(1)
+                    arduino.ejection()
+                    sleep(6)
+                    arduino.blade()
+                    house_number = config.get('house', 'house_number')
+                    sql.add_bottle(flat, house_number)
+                    return render_template('index.html', title='Измельчение', json='Операция успешна')
+                else:
+                    return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
+            elif weight < 15:
                 return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
             else:
+                arduino.conveer()
+                time.sleep(1)
+                arduino.ejection()
                 return render_template('index.html', title='Измельчение', json='Слишком большой вес!')
 
             return render_template('index.html', title='Измельчение', json='Операция успешна')
@@ -52,26 +63,6 @@ def export():
     try:
         sql.export()
         return 'ok'
-    except Exception as ex:
-        logger.error(str(ex))
-        return render_template('error.html', text=str(ex))
-
-
-@app.route("/", methods=['GET', 'POST'])
-def index():
-    try:
-        sleep(1)
-        max_weight = float(config.get('requirements', 'max_weight'))
-        weight = arduino.weight()
-        if float(weight) < max_weight:  #TODO: поменять макс. вес в конфиге
-            arduino.ejection()
-            sleep(1)  #TODO: поменять таймер между операциями
-            arduino.blade()
-            return render_template('index.html', title='Измельчение', json='Операция успешна')
-        elif weight < 10:
-            return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
-        else:
-            return render_template('index.html', title='Измельчение', json='Слишком большой вес!')
     except Exception as ex:
         logger.error(str(ex))
         return render_template('error.html', text=str(ex))
