@@ -20,7 +20,7 @@ class SerialPortConnection():
 
     def conveer(self):
         try:
-            data = 'conveer'
+            data = '1'
             self.ser.write(data.encode('ascii'))
             self.ser.flush()
             return {'status':'ok'}
@@ -31,7 +31,7 @@ class SerialPortConnection():
 
     def blade(self):
         try:
-            data = 'blade'
+            data = '3'
             self.ser.write(data.encode('ascii'))
             self.ser.flush()
             return {'status': 'ok'}
@@ -39,10 +39,19 @@ class SerialPortConnection():
             self.logger.error(str(ex))
             return {'status':'error'}
 
-
-    def ejection(self):
+    def conveer1s(self):
         try:
-            data = 'escape'
+            data = '2'
+            self.ser.write(data.encode('ascii'))
+            self.ser.flush()
+            return {'status': 'ok'}
+        except Exception as ex:
+            self.logger.error(str(ex))
+            return {'status':'error'}
+
+    def escape(self):
+        try:
+            data = '4'
             self.ser.write(data.encode('ascii'))
             self.ser.flush()
             return {'status': 'ok'}
@@ -57,10 +66,9 @@ class SerialPortConnection():
             final_string = ''
             for i in data:
                 final_string = final_string + i
-                if i == '}':
-                    break
-            final = json.loads(final_string)
-            return float(final['weight'])
+            final = final_string[:-2].split(',')
+            self.logger.info(f'final_string:{final_string}; final:{final}')
+            return float(final[1])
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}
@@ -72,10 +80,9 @@ class SerialPortConnection():
             final_string = ''
             for i in data:
                 final_string = final_string + i
-                if i == '}':
-                    break
-            final = json.loads(final_string)
-            return bool(final['check'])
+            final = final_string[:-2].split(',')
+            self.logger.info(f'final_string:{final_string}; final:{final}')
+            return final[0]
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}

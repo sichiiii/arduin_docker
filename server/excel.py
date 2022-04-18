@@ -14,7 +14,7 @@ class Excel():
 
     def export_to_excel(self, query):
         now = datetime.now()
-        bottles = Workbook(f'{self.path}bottles_{now.strftime("%m_%d_%Y_%H-%M")}.xlsx')
+        bottles = Workbook(f'{self.path}/bottles_{now.strftime("%m_%d_%Y_%H-%M")}.xlsx')
         worksheet = bottles.add_worksheet()
         for i, row in enumerate(query):
             for j, value in enumerate(row):

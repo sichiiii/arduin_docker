@@ -2,9 +2,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from excel import Excel
 from sqlalchemy import *
+from time import sleep
 
-from main import SerialPortConnection
-
+import models
 import app_logger
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
@@ -16,13 +16,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 meta = MetaData(engine)
 Base = declarative_base()
 
-class SQL():
+
+class SQL:
     def __init__(self):
         self.excel = Excel()
         self.logger = app_logger.get_logger(__name__)
 
-
-    def add_bottle(self, flat, house_number):
+    def add_bottle(self, flat):
         bottles_table = Table('bottles', meta, autoload=True)
         try:
             with engine.connect() as con:
@@ -31,10 +31,10 @@ class SQL():
 
                 if count != []:
                     bottle_count = count[0][0]
-                    sthm = update(bottles_table).where(and_(bottles_table.c.flat == flat, bottles_table.c.house_number == house_number)).values(count=bottle_count+1)
+                    sthm = update(bottles_table).where(bottles_table.c.flat == flat).values(count=bottle_count+1)
                     con.execute(sthm)
                 else:
-                    sthm = insert(bottles_table).values(flat=flat, count=1, house_number=house_number)
+                    sthm = insert(bottles_table).values(flat=flat, count=1)
                     con.execute(sthm)
             return
         except Exception as ex:
@@ -44,33 +44,38 @@ class SQL():
         bottle_table = Table('bottles', meta, autoload=True)
         try:
             with engine.connect() as con:
-                sthm = select([bottle_table.c.flat])
+                sthm = select([bottle_table.c.flat]).order_by(bottle_table.c.flat)
                 flats = [item[0] for item in con.execute(sthm).fetchall()]
                 return flats
         except Exception as ex:
             self.logger.error(str(ex))
 
-    def update_flats(self, start, end, house_number):
+    def update_flats(self, start, end):
         bottle_table = Table('bottles', meta, autoload=True)
         try:
             with engine.connect() as con:
                 for flat in range(start, end):
-                    sthm = select([bottle_table.c.id]).where(and_(bottle_table.c.flat == flat, bottle_table.c.house_number == house_number))
+                    sthm = select([bottle_table.c.id]).where(bottle_table.c.flat == flat)
                     exists = con.execute(sthm).fetchall()
                     if not exists:
-                        sthm = insert(bottle_table).values(flat=flat, count=0, house_number=house_number)
+                        sthm = insert(bottle_table).values(flat=flat, count=0)
                         con.execute(sthm)
             return
         except Exception as ex:
             self.logger.error(str(ex))
 
-    def export(self):
+    def export(self, start, end):
         bottle_table = Table('bottles', meta, autoload=True)
         try:
             with engine.connect() as con:
-                sthm = select([bottle_table.c.flat, bottle_table.c.count, bottle_table.c.house_number])
+                sthm = select([bottle_table.c.flat, bottle_table.c.count])
                 query = con.execute(sthm).fetchall()
                 self.excel.export_to_excel(query)
-            return 'ok'
+                sleep(5)
+                count = con.execute(bottle_table.count()).fetchall()[0][0]
+                for i in range(1, count+1):
+                    sthm = update(bottle_table).where(bottle_table.c.flat == i).values(count=0)
+                    con.execute(sthm)
+            return
         except Exception as ex:
             self.logger.error(str(ex))

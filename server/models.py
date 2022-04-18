@@ -7,4 +7,3 @@ class Bottles(Base):
     id = Column(Integer, primary_key=True, index=True)
     flat = Column(Integer)
     count = Column(Integer)
-    house_number = Column(String)

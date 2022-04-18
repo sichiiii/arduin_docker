@@ -1,4 +1,3 @@
-import time
 
 from flask import request, render_template
 from main import SerialPortConnection
@@ -22,36 +21,51 @@ sql = SQL()
 def index():
     try:
         if request.method == 'GET':
-            sleep(1)
+            #sleep(1)
             flats = sql.get_flats()
             return render_template('home.html', flats=flats)
         elif request.method == 'POST':
-            sleep(1)
+            #sleep(1)
             max_weight = float(config.get('requirements', 'max_weight'))
             min_weight = float(config.get('requirements', 'min_weight'))
             weight = arduino.weight()
-            arduino.conveer()
-            sleep(5)
+            logger.info(weight)
+            logger.info('Run conveer 1s')
+            arduino.conveer1s()
+            arduino.conveer1s()
+            arduino.conveer1s()
+            arduino.conveer1s()
+            arduino.conveer1s()
+            sleep(2)
             if (weight < max_weight) and (weight > min_weight):
-                if arduino.check():
+                logger.info(f'Weight min:{min_weight}, current:{weight}, max:{max_weight}')
+                check = arduino.check()
+                logger.info(f'Check:{check}')
+                if check == 1 or check == '1':
                     flat = request.form['flat_button']
-                    sleep(1)
-                    arduino.ejection()
-                    sleep(6)
+                    logger.info('Run conveer 3.5s')
+                    arduino.conveer()
+                    sleep(3.5)
+                    #arduino.ejection()
+                    logger.info('Run blade 5s')
                     arduino.blade()
-                    house_number = config.get('house', 'house_number')
-                    sql.add_bottle(flat, house_number)
+                    sql.add_bottle(flat)
                     return render_template('index.html', title='Измельчение', json='Операция успешна')
                 else:
+                    logger.info(f'Weight min:{min_weight}, current:{weight}, max:{max_weight}')
+                    arduino.escape()
                     return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
-            elif weight < 15:
+            elif weight < 0.015:
+                logger.info(f'Weight min:{min_weight}, current:{weight}, max:{max_weight}')
+                arduino.escape()
                 return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
             else:
-                arduino.conveer()
-                time.sleep(1)
-                arduino.ejection()
+                #logger.info('Run conveer 1s')
+                #arduino.conveer1s()
+                #time.sleep(1)
+                logger.info('Run ejection')
+                arduino.escape()
                 return render_template('index.html', title='Измельчение', json='Слишком большой вес!')
-
             return render_template('index.html', title='Измельчение', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
@@ -61,8 +75,10 @@ def index():
 @app.route("/export", methods=['GET', 'POST'])
 def export():
     try:
-        sql.export()
-        return 'ok'
+        start = int(config.get('house', 'start'))
+        end = int(config.get('house', 'end'))
+        sql.export(start, end)
+        return render_template('index.html', title='Экспорт', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
         return render_template('error.html', text=str(ex))
@@ -73,8 +89,7 @@ def update_flats():
     try:
         start = config.get('house', 'start')
         end = config.get('house', 'end')
-        house_number = config.get('house', 'house_number')
-        sql.update_flats(int(start), int(end), house_number)
+        sql.update_flats(int(start), int(end)+1)
         return render_template('index.html', title='Добавление квартир', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
@@ -126,7 +141,7 @@ def blade():
 def ejection():
     try:
         sleep(1)
-        result = arduino.ejection()
+        result = arduino.escape()
         if result['status'] == 'ok':
             result = 'Операция успешна'
         else:
@@ -155,7 +170,7 @@ def check():
     try:
         sleep(1)
         result = arduino.check()
-        if result == "True":
+        if result == 1 or result == "1":
             result = 'Бутылка в аппарате'
         else:
             result = 'Бутылка отсутствует'
