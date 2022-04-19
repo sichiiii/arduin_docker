@@ -1,12 +1,13 @@
-import serial, app_logger, json
-from config import Configuration
-from time import sleep
+import app_logger
+import json
+import serial
 
+from config import Configuration
 
 config_path = './config.ini'
 
 
-class SerialPortConnection():
+class SerialPortConnection:
     def __init__(self):
         self.config = Configuration()
         self.config.load(config_path)
@@ -17,17 +18,15 @@ class SerialPortConnection():
         self.ser = serial.Serial(self.port_name, self.baudrate, timeout=int(self.pause)) 
         self.logger = app_logger.get_logger(__name__) 
 
-
     def conveer(self):
         try:
             data = '1'
             self.ser.write(data.encode('ascii'))
             self.ser.flush()
-            return {'status':'ok'}
+            return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}
-
 
     def blade(self):
         try:
@@ -37,7 +36,7 @@ class SerialPortConnection():
             return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
-            return {'status':'error'}
+            return {'status': 'error'}
 
     def conveer1s(self):
         try:
@@ -47,7 +46,7 @@ class SerialPortConnection():
             return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
-            return {'status':'error'}
+            return {'status': 'error'}
 
     def escape(self):
         try:
@@ -57,8 +56,7 @@ class SerialPortConnection():
             return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
-            return {'status':'error'}
-
+            return {'status': 'error'}
 
     def weight(self):
         try:
@@ -73,7 +71,6 @@ class SerialPortConnection():
             self.logger.error(str(ex))
             return {'status': 'error'}
 
-
     def check(self):
         try:
             data = self.ser.readline().decode("utf-8")
@@ -86,7 +83,6 @@ class SerialPortConnection():
         except Exception as ex:
             self.logger.error(str(ex))
             return {'status': 'error'}
-
 
     def stop(self):
         try:

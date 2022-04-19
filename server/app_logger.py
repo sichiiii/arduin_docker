@@ -1,8 +1,8 @@
 import logging
-#from config import Config as config
 
 
-_log_format =("%(asctime)s - [%(levelname)s] - %(name)s - (%(filename)s).%(funcName)s(%(lineno)d) - %(message)s")
+_log_format = ("%(asctime)s - [%(levelname)s] - %(name)s - (%(filename)s).%(funcName)s(%(lineno)d) - %(message)s")
+
 
 def get_file_handler():
     file_handler = logging.FileHandler('./log')

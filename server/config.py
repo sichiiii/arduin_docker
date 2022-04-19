@@ -1,10 +1,7 @@
 import configparser
 import os
 
-from logging.config import fileConfig
 from typing import Dict, Optional
-
-#from .exceptions import MissingConfiguration
 
 
 class Configuration(configparser.RawConfigParser):
@@ -17,11 +14,8 @@ class Configuration(configparser.RawConfigParser):
         self.read(os.path.join(self.include, conf))
 
     def get_section(self, section: str) -> Dict[str, str]:
-        if not self.has_section(section):
-            raise MissingConfiguration(section)
         return dict(self[section])
 
     def load(self, path: str) -> None:
         self.path = path
         self.read(self.path)
-

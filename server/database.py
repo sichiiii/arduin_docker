@@ -4,7 +4,6 @@ from excel import Excel
 from sqlalchemy import *
 from time import sleep
 
-import models
 import app_logger
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
@@ -64,7 +63,7 @@ class SQL:
         except Exception as ex:
             self.logger.error(str(ex))
 
-    def export(self, start, end):
+    def export(self):
         bottle_table = Table('bottles', meta, autoload=True)
         try:
             with engine.connect() as con:

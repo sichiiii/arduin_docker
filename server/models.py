@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer
 from database import Base
+
 
 class Bottles(Base):
     __tablename__ = "bottles"

@@ -1,4 +1,3 @@
-
 from flask import request, render_template
 from main import SerialPortConnection
 from database import SQL
@@ -13,7 +12,6 @@ config.load(config_path)
 arduino = SerialPortConnection()
 logger = app_logger.get_logger(__name__)
 
-
 sql = SQL()
 
 
@@ -21,11 +19,9 @@ sql = SQL()
 def index():
     try:
         if request.method == 'GET':
-            #sleep(1)
             flats = sql.get_flats()
             return render_template('home.html', flats=flats)
         elif request.method == 'POST':
-            #sleep(1)
             max_weight = float(config.get('requirements', 'max_weight'))
             min_weight = float(config.get('requirements', 'min_weight'))
             weight = arduino.weight()
@@ -46,7 +42,7 @@ def index():
                     logger.info('Run conveer 3.5s')
                     arduino.conveer()
                     sleep(3.5)
-                    #arduino.ejection()
+                    # arduino.ejection()
                     logger.info('Run blade 5s')
                     arduino.blade()
                     sql.add_bottle(flat)
@@ -60,13 +56,12 @@ def index():
                 arduino.escape()
                 return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
             else:
-                #logger.info('Run conveer 1s')
-                #arduino.conveer1s()
-                #time.sleep(1)
+                # logger.info('Run conveer 1s')
+                # arduino.conveer1s()
+                # time.sleep(1)
                 logger.info('Run ejection')
                 arduino.escape()
                 return render_template('index.html', title='Измельчение', json='Слишком большой вес!')
-            return render_template('index.html', title='Измельчение', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
         return render_template('error.html', text=str(ex))
@@ -75,9 +70,7 @@ def index():
 @app.route("/export", methods=['GET', 'POST'])
 def export():
     try:
-        start = int(config.get('house', 'start'))
-        end = int(config.get('house', 'end'))
-        sql.export(start, end)
+        sql.export()
         return render_template('index.html', title='Экспорт', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
@@ -89,13 +82,13 @@ def update_flats():
     try:
         start = config.get('house', 'start')
         end = config.get('house', 'end')
-        sql.update_flats(int(start), int(end)+1)
+        sql.update_flats(int(start), int(end) + 1)
         return render_template('index.html', title='Добавление квартир', json='Операция успешна')
     except Exception as ex:
         logger.error(str(ex))
 
 
-@app.route("/remoter", methods=['GET', 'POST'])  # TODO: add flat choosing
+@app.route("/remoter", methods=['GET', 'POST'])
 def remoter():
     try:
         sleep(1)

@@ -6,7 +6,7 @@ from xlsxwriter.workbook import Workbook
 config_path = './config.ini'
 
 
-class Excel():
+class Excel:
     def __init__(self):
         self.config = Configuration()
         self.config.load(config_path)
@@ -20,4 +20,4 @@ class Excel():
             for j, value in enumerate(row):
                 worksheet.write(i, j, value)
         bottles.close()
-        return 'ok'
+        return
