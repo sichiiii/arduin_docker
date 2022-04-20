@@ -1,4 +1,4 @@
-from flask import request, render_template
+from flask import request, render_template, redirect, url_for
 from main import SerialPortConnection
 from database import SQL
 from config import Configuration
@@ -175,18 +175,12 @@ def check():
         return render_template('error.html', text=str(ex))
 
 
-@app.route("/stop", methods=['GET', 'POST'])
-def stop():
+@app.route("/reset", methods=['GET', 'POST'])
+def reset():
     try:
-        sleep(1)
-        result = arduino.stop()
-        if result['status'] == 'ok':
-            result = 'Операция успешна'
-        else:
-            result = 'Операция не проведена'
-        if request.method == 'GET':
-            return render_template('json.html', json=result, title='Стоп')
-        return result
+        arduino.reset()
+        sleep(4)
+        return redirect("http://127.0.0.1:5000/")
     except Exception as ex:
         logger.error(str(ex))
         return render_template('error.html', text=str(ex))

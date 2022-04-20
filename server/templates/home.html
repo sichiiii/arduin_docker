@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-      <link rel="stylesheet" href="static/css/style2.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="static/css/style2.css">
+    <meta http-equiv="refresh" content="4;url=http://127.0.0.1:5000/reset" />
 </head>
 
 <label hidden id="flats">{{ flats }}</label>
@@ -29,9 +30,6 @@
 	  	<button value={{ flat }} name="flat_button" class="floating-button"> {{ flat }} </button>
 	{% endfor %}
   </form>
-	<form action="remoter" autocomplete="off">
-    	<button value=flat class="floating-button" style="display: block; margin-left: auto; margin-right: auto;"> Вернуться </button>
-	</form>
 </div>
 
 </body>

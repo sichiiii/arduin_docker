@@ -1,25 +1,38 @@
-#include <ArduinoJson.h>
-#include "HX711.h"  
+//#include <ArduinoJson.h>
+#include "HX711.h" 
 
-#define DT  A0
-#define SCK A1
+#define DT  2
+#define SCK 3
 
 HX711 scale;  
 
-float calibration_factor = -14.15;     // поменять                      
-float units;                                                  
-float ounces; 
+float calibration_factor = 67000;     // поменять                      
 
-int conveer_D5 = 5;
+int conveer_D5 = 6;
 int blade_D7 = 7;
-int escape_D6 = 6;
-int check_D3 = 3;
+int escape_D6 = 5;
+int check_D3 = 4;
 
+void stop(){
+  digitalWrite(conveer_D5, HIGH);
+  digitalWrite(blade_D7, HIGH);
+  digitalWrite(escape_D6, HIGH);
+}
+
+float weight = 0.0;
+bool check = 0;
+
+unsigned long interval = 0;
+unsigned long previousMillis = 0;
+
+float units;
 float val1 = 0.0;
 bool val2 = 0;
 
-StaticJsonDocument<200> flask;
-StaticJsonDocument<200> sensors;
+//StaticJsonDocument<200> flask;
+//StaticJsonDocument<200> sensors;
+
+void(* resetFunc) (void) = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -30,44 +43,53 @@ void setup() {
   pinMode(blade_D7, OUTPUT);
   pinMode(escape_D6, OUTPUT);
   pinMode(check_D3, INPUT);
+  digitalWrite(conveer_D5, HIGH);
+  digitalWrite(escape_D6, HIGH);
+  digitalWrite(blade_D7, HIGH);
 }
 
 void loop() { 
-       String command = Serial.readString();
-       if (command == "conveer"){
-            digitalWrite(conveer_D5, HIGH);
-            delay(5000);   
-            digitalWrite(conveer_D5, LOW);
-       }
-       if (command == "blade"){
-            digitalWrite(blade_D7, HIGH);
-            delay(4000);
-            digitalWrite(blade_D7, LOW);       
-       }
-       if (command == "escape"){
-            digitalWrite(escape_D6, HIGH);  
-            delay(5000); 
-            digitalWrite(escape_D6, LOW);
-       }
-       if (command == "stop"){
-            digitalWrite(conveer_D5, LOW);
-            digitalWrite(blade_D7, LOW);
-            digitalWrite(escape_D6, LOW);
-       }
-       for (int i = 0; i < 10; i ++) {                             
-          units = + scale.get_units(), 10;                         
-       }
-       if(digitalRead(check_D3)==LOW)  {   
-         sensors["check"] = "True";     
-       }
-       else  {                     
-         sensors["check"] = "False";      
-       }
-       units = units / 10;                                       
-       ounces = units * 0.035274;      
-       sensors["weight"] = ounces;
-       delay(500); 
-       serializeJson(sensors, Serial);
+    int command = Serial.read();
+    if (command == 7){
+        resetFunc();
+    }
+
+    if (command == 9){
+        digitalWrite(conveer_D5, LOW);
+        interval = 5000;   
+    }
+    if (command == 0){
+        digitalWrite(conveer_D5, LOW);
+        interval = 900;   
+    }
+    if (command == 1){
+        digitalWrite(blade_D7, LOW);
+        interval = 5000;    
+        check = 0;      
+    }
+    if (command == 2){
+        digitalWrite(escape_D6, LOW);  
+        interval = 200;
+        check = 0;
+    }
+    if(digitalRead(check_D3)==LOW)  {   
+        check = 1;     
+    }
+    units = scale.get_units()*0.453592;      
+    weight = units;
+    Serial.print(check);
+    Serial.print(',');
+    Serial.print(weight);
+    Serial.print(',');
+    Serial.print(command);
+    Serial.println();
+
+    unsigned long currentMillis = millis();
+
+    if (currentMillis - previousMillis > interval) {
+      previousMillis = currentMillis;
+      stop();
+    }
 }
 
   

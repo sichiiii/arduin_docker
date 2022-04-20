@@ -84,11 +84,11 @@ class SerialPortConnection:
             self.logger.error(str(ex))
             return {'status': 'error'}
 
-    def stop(self):
+    def reset(self):
         try:
-            data = 'stop'
-            data = json.dumps(data)
+            data = '7'
             self.ser.write(data.encode('ascii'))
+            self.ser.flush()
             return {'status': 'ok'}
         except Exception as ex:
             self.logger.error(str(ex))
