@@ -1,3 +1,5 @@
+import time
+
 from flask import request, render_template, redirect, url_for
 from main import SerialPortConnection
 from database import SQL
@@ -42,7 +44,6 @@ def index():
                     logger.info('Run conveer 3.5s')
                     arduino.conveer()
                     sleep(3.5)
-                    # arduino.ejection()
                     logger.info('Run blade 5s')
                     arduino.blade()
                     sql.add_bottle(flat)
@@ -50,10 +51,14 @@ def index():
                 else:
                     logger.info(f'Weight min:{min_weight}, current:{weight}, max:{max_weight}')
                     arduino.escape()
+                    time.sleep(1)
+                    arduino.reset()
                     return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
             elif weight < 0.015:
                 logger.info(f'Weight min:{min_weight}, current:{weight}, max:{max_weight}')
                 arduino.escape()
+                time.sleep(1)
+                arduino.reset()
                 return render_template('index.html', title='Измельчение', json='Бутылка отсуствует!')
             else:
                 # logger.info('Run conveer 1s')
@@ -61,6 +66,8 @@ def index():
                 # time.sleep(1)
                 logger.info('Run ejection')
                 arduino.escape()
+                time.sleep(1)
+                arduino.reset()
                 return render_template('index.html', title='Измельчение', json='Слишком большой вес!')
     except Exception as ex:
         logger.error(str(ex))
@@ -135,6 +142,8 @@ def ejection():
     try:
         sleep(1)
         result = arduino.escape()
+        time.sleep(1)
+        arduino.reset()
         if result['status'] == 'ok':
             result = 'Операция успешна'
         else:

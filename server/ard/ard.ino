@@ -36,8 +36,8 @@ void(* resetFunc) (void) = 0;
 
 void setup() {
   Serial.begin(9600);
-  scale.begin(DT, SCK);                                        
-  scale.tare();                                             
+  scale.begin(DT, SCK);
+  scale.tare();
   scale.set_scale(calibration_factor);
   pinMode(conveer_D5, OUTPUT);
   pinMode(blade_D7, OUTPUT);
@@ -48,34 +48,38 @@ void setup() {
   digitalWrite(blade_D7, HIGH);
 }
 
-void loop() { 
+void loop() {
     int command = Serial.read();
     if (command == 7){
         resetFunc();
     }
-
     if (command == 9){
         digitalWrite(conveer_D5, LOW);
-        interval = 5000;   
+        interval = 5000;
     }
     if (command == 0){
         digitalWrite(conveer_D5, LOW);
-        interval = 900;   
+        interval = 900;
     }
     if (command == 1){
         digitalWrite(blade_D7, LOW);
-        interval = 5000;    
-        check = 0;      
+        interval = 5000;
+        check = 0;
     }
     if (command == 2){
-        digitalWrite(escape_D6, LOW);  
+        digitalWrite(escape_D6, LOW);
         interval = 200;
         check = 0;
     }
-    if(digitalRead(check_D3)==LOW)  {   
-        check = 1;     
+    if (command == 4){
+        digitalWrite(escape_D6, LOW);
+        interval = 200;
+        check = 0;
     }
-    units = scale.get_units()*0.453592;      
+    if(digitalRead(check_D3)==LOW)  {
+        check = 1;
+    }
+    units = scale.get_units()*0.453592;
     weight = units;
     Serial.print(check);
     Serial.print(',');
@@ -92,4 +96,4 @@ void loop() {
     }
 }
 
-  
+
